@@ -44,8 +44,11 @@ Clone this branch of the repo on your computer.
 
 ## Code organization
 
-- `datasets` contains datasets of trajectories generated with `dataset_making.py` from PPO policies
-
+- `datasets` contains datasets of trajectories generated with `dataset_making.py` from PPO policies saved in the folder `policies`.
+- `policies` contains the PPO policies trained with `train_ppo.py`.
+- `trained` contains the DiT models trained with `train_DiT.py` and ready to be evaluated with `eval_DiT.py`.
+- `DiT_SA.py` codes the Diffusion Transformer (DiT) to generate State-Action (SA) trajectories.
+- `PPO.py` is the PPO implementation modified from this [repo](https://github.com/Lizhi-sjtu/DRL-code-pytorch/tree/main/5.PPO-continuous)
 
 
 ## TODO list
