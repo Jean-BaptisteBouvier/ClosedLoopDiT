@@ -26,7 +26,8 @@ import argparse
 import numpy as np
 
 from PPO import PPO
-from hopper import HopperEnv, plot_traj, rollout
+from hopper import HopperEnv
+from plots import plot_traj
 
 from ppo_utils import ReplayBuffer, training, load, save
 from normalization import Normalization, RewardScaling
@@ -110,7 +111,26 @@ else:
 
 #%% Testing
 
-Traj, Actions = rollout(env, agent, state_norm)
+# Simple test rollout
+state = env.reset()
+episode_reward = 0
+Traj = []
+Actions = []
+
+for t in range(env.max_episode_steps):
+    with torch.no_grad():
+        action = agent.evaluate(state, state_norm)
+    state, reward, done = env.step(action)
+    episode_reward += reward
+    
+    Traj.append(state)
+    Actions.append(action)
+    
+    if done: break
+
+Traj = np.array(Traj)
+Actions = np.array(Actions)
+print(f"Test rollout reward: {episode_reward:.3f}")
 
 #%% Visualisation
 

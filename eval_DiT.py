@@ -34,10 +34,10 @@ mode = "full"
 
 set_seed(0) 
 env = HopperEnv()
-N_trajs = 1000
-obs, act = load_dataset(f"datasets/{mode}_{N_trajs}trajs_300steps")
-obs = torch.FloatTensor(obs[:, :299]).to(device)
-act = torch.FloatTensor(act[:, :299]).to(device)
+N_trajs = 500  # Changed from 1000 to use available dataset
+obs, act = load_dataset(f"datasets/{mode}_{N_trajs}trajs_40steps")  # Changed from 300steps to 40steps
+obs = torch.FloatTensor(obs[:, :39]).to(device)  # Changed from :299 to :39 for 40-step dataset
+act = torch.FloatTensor(act[:, :39]).to(device)  # Changed from :299 to :39 for 40-step dataset
 normalizer = State_Normalizer(obs)
 nor_obs = normalizer.normalize(obs)
 x = torch.cat([nor_obs, act], dim=-1) # dataset of state-action trajectories
@@ -76,7 +76,7 @@ replan_horizon = H#//2
 #%% DiT
 
 # pred, actual, reward = planner.closed_loop_traj(s0, traj_len=300, replan_horizon=replan_horizon)
-pred, actions, actual, reward = planner.best_traj(s0, traj_len=300, replan_horizon=replan_horizon, n_samples_per_s0=8)
+pred, actions, actual, reward = planner.best_traj(s0, traj_len=40, replan_horizon=replan_horizon, n_samples_per_s0=8)  # Changed from 300 to 40
 if type(pred) == list:
     pred = pred[0]
     actual = actual[0]
@@ -89,7 +89,7 @@ traj_comparison(env, pred, "sampled", actual, "actual", horizon=replan_horizon,
 
 #%% Conditional DiT on initial state
 
-pred, actual, reward = cond_planner.closed_loop_traj(s0, traj_len=300, replan_horizon=replan_horizon)
+pred, actual, reward = cond_planner.closed_loop_traj(s0, traj_len=40, replan_horizon=replan_horizon)  # Changed from 300 to 40
 # pred, actions, actual, reward = cond_planner.best_traj(s0, traj_len=300, replan_horizon=replan_horizon, n_samples_per_s0=8)
 if type(pred) == list:
     pred = pred[0]
