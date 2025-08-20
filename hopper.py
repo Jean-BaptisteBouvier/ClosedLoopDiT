@@ -154,6 +154,33 @@ class HopperEnv():
     
     
 
+def rollout(env, agent, state_norm, title="", s0=None, display=True):
+    """Test the policy on a rollout with trajectory plot"""
+    
+    if s0 is None:
+        state = env.reset()
+    else:
+        state = env.reset_to(s0)
+    N_step = env.max_episode_steps
+    episode_reward = 0.
+    Traj = np.zeros((N_step, env.state_size))
+    Traj[0] = state
+    Actions = np.zeros((N_step-1, env.action_size))
+    
+    for t in range(1, N_step):
+        with torch.no_grad():
+            action = agent.evaluate(state, state_norm)
+        next_state, reward, done = env.step(action)
+        episode_reward += reward
+        state = next_state
+        Traj[t] = state
+        Actions[t-1] = action
+        if done: break
+    
+    if display:
+        print(title + f" total reward: {episode_reward:.1f}")
+        plot_traj(env, Traj[:t+1], title=title)
+    return Traj[:t+1], Actions[:t]
    
 
 
@@ -457,3 +484,4 @@ class HopperEnv():
 #                 getattr(self.viewer.cam, key)[:] = value
 #             else:
 #                 setattr(self.viewer.cam, key, value)
+
